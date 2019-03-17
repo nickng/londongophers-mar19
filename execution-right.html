@@ -1,0 +1,37 @@
+<table>
+  <tr>
+    <th><code>go Withdraw(5)</code></th>
+    <th><code>go Withdraw(4)</code></th>
+    <th><code>go Withdraw(7)</code></th>
+  </tr>
+  <tr>
+    <td><span style='color: #47a; font-weight: bold'>① read</span> balance (10)</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><span style='color: #e63; font-weight: bold'>② read</span> balance (10)</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><span style='color: #283; font-weight: bold'>③ write</span> balance (5)</td>
+    <td><span style='color: #47a; font-weight: bold'>read</span> balance (5)</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><span style='color: #e63; font-weight: bold'>read</span> balance (5)</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><span style='color: #283; font-weight: bold'>read</span> balance (1)</td>
+    <td><span style='color: #47a; font-weight: bold'>read</span> balance (1)</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>(not enough money)</td>
+  </tr>
+</table>

@@ -1,0 +1,28 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usetikzlibrary{positioning}
+\input{colour}
+
+\begin{document}
+\begin{tikzpicture}[%
+  arr/.style={->,thick},%
+  glow/.style={preaction={draw,yellow,-,double=yellow,double distance=2\pgflinewidth}}%
+  ]
+  \node (s) {\sf Program start};
+%
+  \node (1-5) [below left =0.3 and 1 of s]{\sf\w{5}:\textcolor{r1}{R}\textcolor{r2}{R}\textcolor{w3}{W}};
+  \node (1-4) [below      =0.5       of s]{\sf\w{4}:\textcolor{r1}{R}\textcolor{r2}{R}\textcolor{w3}{W}};
+  \node (1-7) [below right=0.3 and 1 of s]{\sf\w{7}:\textcolor{r1}{R}\textcolor{r2}{R}\textcolor{w3}{W}};
+%
+  \node (e) [below=1.5 of s] {\sf Program end};
+%
+  \draw[arr] (s) -- (1-5);
+  \draw[arr] (s) -- (1-4);
+  \draw[arr] (s) -- (1-7);
+  \draw[arr] (1-5)-- (e);
+  \draw[arr] (1-4)-- (e);
+  \draw[arr] (1-7)-- (e);
+%
+\end{tikzpicture}
+\end{document}

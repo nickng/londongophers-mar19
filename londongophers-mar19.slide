@@ -1,0 +1,162 @@
+WARNING: DATA RACE
+exit status 66
+20 Mar 2019
+
+Nicholas Ng
+Monzo
+nickng@nickng.io
+@nicholascwng
+
+* Implement withdraw money
+
+.play balance.go /^type bankAccount/,/\/\/ end/
+
+* What went wrong
+
+.html withdraw.html
+.html execution-right.html
+
+* What went wrong
+
+.html withdraw.html
+.html execution-wrong.html
+
+Also, output is *non-deterministic*: different behaviour depending on run
+
+* How to fix it
+
+Channels
+
+- One goroutine 'owns' balance
+- Other goroutines send message over channel to update balance
+
+Mutex locks
+
+- Mutual exclusive access to the shared variable (e.g. balance)
+- `Lock()` → read and update balance → `Unlock()`
+
+Don't write concurrent code
+
+- No problem if nothing is shared!
+
+*But*why?*
+
+* Meet Leslie
+
+.image images/leslie.jpg _ 300
+
+*Leslie*Lamport*
+
+Known for distributed systems: Paxos, TLA+, LaTeX, etc.
+
+* Ordering of events
+
+.image images/hb.png _ 700
+.caption *Time,*Clocks,*and*the*Ordering*of*Events*in*a*Distributed*System*
+.caption Leslie Lamport, _Communications_of_the_ACM_(1978)_
+
+For example, *A* "happened before" *B* (written *A* → *B*)
+
+We use it to talk about the *ordering* of events (hint: read/write of shared memory)
+
+* Sequential Consistency
+
+.image images/sc.png _ 700
+.caption *How*to*Make*a*Multiprocessor*Computer*That*Correctly*Executes*Multiprocess*Programs*
+.caption Leslie Lamport, _IEEE_Transactions_on_Computers_(1979)_
+
+The *concurrent* execution is consistent with (or appears to match) *sequential* execution
+
+A very desirable property (and strong guarantee)
+
+- e.g. You can reason about a concurrent program like a sequential program
+
+* 🏁 Data race
+
+In a data race, the last thread/goroutine to *write* "wins" 🥇
+
+Visualise with a happens-before graph
+
+.image images/race-graph.png
+.caption From the graph, can you tell who won the data race?
+
+.html hbg-caption.html
+Within a goroutine, happens-before is sequential (source code order)
+
+* 🛇🏁 No data race
+
+Synchronising with channels, mutex locks to avoid races is like _match_fixing_
+
+- Events may appear in different order, but events are always ordered
+- All paths contain same events
+
+.image images/locked-graph.png
+
+All possible executions give same result as sequential -- *sequential*consistent*!
+
+* Go Dynamic Race Detector
+
+- Compiler instrument your code (*ALL* memory read/write + thread creation)
+- Analyse happens-before graph as you execute
+
+Run/build with race detector on
+
+ go run -race main.go
+ go build -race main.go
+
+Test with race detector on
+
+ go test -race ./...
+
+.link https://blog.golang.org/race-detector
+
+*"go*test*-race"*Under*the*Hood,*Kavya*Joshi*
+.link https://www.youtube.com/watch?v=5erqWdlhQLA
+
+* Summary
+
+- Using concurrency correctly, as always, is hard
+- Detect data races 🐞 by analysing happens-before graph of memory accesses
+- Test your code extensively with `go`test`-race`
+
+Is extensive testing (including fuzzing) the only way? (Hint: no, stay tuned)
+
+There are many more interesting related topics (memory model, synchronisation)
+
+* Extra slides
+
+* The Go Memory Model
+
+_Programs_that_modify_data_being_simultaneously_accessed_by_multiple_goroutines_must_serialize_such_access._
+
+_To_serialize_access,_protect_the_data_with_channel_operations_or_other_synchronization_primitives_such_as_those_in_the_sync_and_sync/atomic_packages._
+
+_If_you_must_read_the_rest_of_this_document_to_understand_the_behavior_of_your_program,_you_are_being_too_clever._
+
+_Don't_be_clever._
+
+.link https://golang.org/ref/mem
+
+- Defined in terms of *happens-before* relation
+- Opportunities for optimisation and Go in relaxed memory hardware architectures
+- SC-DRF: Sequential consistent if program is data-race free
+
+* Potentials for static analysis
+
+The Go Memory Model definition can be used as blueprint for type-based analysis
+
+*Operational*semantics*of*a*weak*memory*model*with*channel*synchronization*
+Fava, Steffen, Stolz, _JLAMP_(2019)_
+
+*A*Static*Verification*Framework*for*Message*Passing*in*Go*using*Behavioural*Types*
+Lange, Ng, Toninho, Yoshida, _ICSE_(2018)_
+
+So, maybe?
+
+* Benign Data Races
+
+- Code with data races but _doesn't_matter_ is a myth
+- If data races exist, program can do anything (not sequential consistent)
+- Program with data race → anything can happen!
+
+.link https://software.intel.com/en-us/blogs/2013/01/06/benign-data-races-what-could-possibly-go-wrong "Benign Data Races: What Could Possibly Go Wrong?", Dmitry Vyukov
