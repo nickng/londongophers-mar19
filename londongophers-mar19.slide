@@ -96,9 +96,6 @@ All possible executions give same result as sequential -- *sequential*consistent
 
 * Go Dynamic Race Detector
 
-- Compiler instrument your code (*ALL* memory read/write + thread creation)
-- Analyse happens-before graph as you execute
-
 Run/build with race detector on
 
  go run -race main.go
@@ -109,6 +106,14 @@ Test with race detector on
  go test -race ./...
 
 .link https://blog.golang.org/race-detector
+
+* Go Dynamic Race Detector
+
+- Compiler instrument your code (*ALL* memory read/write + thread creation)
+- Analyse happens-before graph as you execute
+
+.image images/gorunrace.png
+
 
 *"go*test*-race"*Under*the*Hood,*Kavya*Joshi*
 .link https://www.youtube.com/watch?v=5erqWdlhQLA
