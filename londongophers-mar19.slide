@@ -83,7 +83,7 @@ Visualise with a happens-before graph
 .html hbg-caption.html
 Within a goroutine, happens-before is sequential (source code order)
 
-* 🛇🏁 No data race
+* ❌🏁 No data race
 
 Synchronising with channels, mutex locks to avoid races is like _match_fixing_
 
