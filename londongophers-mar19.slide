@@ -7,6 +7,13 @@ Monzo
 nickng@nickng.io
 @nicholascwng
 
+* Go and concurrency
+
+- Goroutines = *go* + function call
+- Why don't we make everything goroutines?
+
+What can possibly *go* wrong?
+
 * Implement withdraw money
 
 .play balance.go /^type bankAccount/,/\/\/ end/
@@ -71,9 +78,9 @@ A very desirable property (and strong guarantee)
 
 - e.g. You can reason about a concurrent program like a sequential program
 
-* 🏁 Data race
+* 🏁 Data race: a strange kind of race
 
-In a data race, the last thread/goroutine to *write* "wins" 🥇
+In a data race, the last thread/goroutine to *write* "wins" 🥇 (but read is ok)
 
 Visualise with a happens-before graph
 
@@ -85,14 +92,14 @@ Within a goroutine, happens-before is sequential (source code order)
 
 * ❌🏁 No data race
 
-Synchronising with channels, mutex locks to avoid races is like _match_fixing_
+*Synchronising* with channels, mutex locks to avoid races is like _match_fixing_
 
-- Events may appear in different order, but events are always ordered
-- All paths contain same events
+- Events may appear in different order, but always total order
+- You can always find an equivalent sequential trace
 
 .image images/locked-graph.png
 
-All possible executions give same result as sequential -- *sequential*consistent*!
+All possible executions give same result as a sequential -- *sequential*consistent*!
 
 * Go Dynamic Race Detector
 
@@ -124,7 +131,7 @@ Test with race detector on
 - Detect data races 🐞 by analysing happens-before graph of memory accesses
 - Test your code extensively with `go`test`-race`
 
-Is extensive testing (including fuzzing) the only way? (Hint: no, stay tuned)
+Is extensive testing (including fuzzing) the only way? (hint: no)
 
 There are many more interesting related topics (memory model, synchronisation)
 
